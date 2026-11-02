@@ -1,4 +1,4 @@
-## r-Nano 9.3
+## rNano 9.3
 
 Old terminal-based editor based on GNU Nano.
 
