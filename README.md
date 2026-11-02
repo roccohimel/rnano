@@ -15,13 +15,29 @@ sudo dnf install git gcc make autoconf automake gettext gettext-devel groff texi
 ```
 Build:
 ```
+make clean
+./autogen.sh
 ./configure --prefix="/usr"
 make -j$(nproc)
 ```
 Install:
 ```
 sudo dnf remove nano
+sudo rm -rfv /usr/bin/nano /usr/bin/rnano
 sudo make install
+rm -rfv ~/.nanorc
+printf 'include "/usr/share/nano/*.nanorc"\ninclude "/usr/share/nano/extra/*.nanorc"\n' >> ~/.nanorc
+```
+Full:
+```
+make clean
+./autogen.sh
+./configure --prefix="/usr"
+make -j$(nproc)
+sudo dnf remove nano
+sudo rm -rfv /usr/bin/nano /usr/bin/rnano
+sudo make install
+rm -rfv ~/.nanorc
 printf 'include "/usr/share/nano/*.nanorc"\ninclude "/usr/share/nano/extra/*.nanorc"\n' >> ~/.nanorc
 ```
 

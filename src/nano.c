@@ -661,9 +661,9 @@ void usage(void)
 void version(void)
 {
 #ifdef REVISION
-	printf(" GNU nano from git, %s\n", REVISION);
+	printf(" rNano from git, %s\n", REVISION);
 #else
-	printf(_(" GNU nano, version %s\n"), VERSION);
+	printf(_(" rNano, version %s\n"), VERSION);
 #endif
 #ifndef NANO_TINY
 	/* TRANSLATORS: The %s is the year of the latest release. */
@@ -2432,6 +2432,10 @@ int main(int argc, char **argv)
 		interface_color_pair[KEY_COMBO] = hilite_attribute;
 		interface_color_pair[FUNCTION_TAG] = A_NORMAL;
 	}
+
+	/* Show bottom prompts and regular messages with default terminal colors. */
+	interface_color_pair[PROMPT_BAR] = A_NORMAL;
+	interface_color_pair[STATUS_BAR] = A_NORMAL;
 
 	/* Set up the terminal state. */
 	terminal_init();

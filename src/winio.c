@@ -32,9 +32,9 @@
 #endif
 
 #ifdef REVISION
-#define BRANDING  REVISION
+#define BRANDING  "rNano " REVISION
 #else
-#define BRANDING  PACKAGE_STRING
+#define BRANDING  "rNano " VERSION
 #endif
 
 static int *key_buffer = NULL;
