@@ -2014,6 +2014,9 @@ void titlebar(const char *path)
 		/* The presentable form of the pathname. */
 	char *ranking = NULL;
 		/* The buffer sequence number plus the total buffer count. */
+	char location[64];
+		/* The cursor's one-based line and screen-column position. */
+	size_t locationlen = 0;
 
 	/* If the screen is too small, there is no title bar. */
 	if (topwin == NULL)
@@ -2071,6 +2074,14 @@ void titlebar(const char *path)
 			pluglen = breadth(_("Modified")) + 1;
 	}
 
+	/* Keep a compact cursor position at the right of the normal title bar. */
+	if (!inhelp && currmenu == MMAIN) {
+		snprintf(location, sizeof(location), "Ln %zd, Col %zu",
+						openfile->current->lineno, xplustabs() + 1);
+		if ((size_t)COLS > strlen(location) + 4)
+			locationlen = strlen(location);
+	}
+
 	/* Determine the widths of the four elements, including their padding. */
 	verlen = breadth(upperleft) + 3;
 	prefixlen = breadth(prefix);
@@ -2078,7 +2089,11 @@ void titlebar(const char *path)
 		prefixlen++;
 	pathlen = breadth(path);
 	statelen = breadth(state) + 2;
-	if (statelen > 2)
+	if (locationlen > 0) {
+		statelen += locationlen + 2;
+		pluglen = 0;
+	}
+	if (*state)
 		pathlen++;
 
 	/* Only print the version message when there is room for it. */
@@ -2142,6 +2157,9 @@ void titlebar(const char *path)
 		else if (statelen > 0)
 			mvwaddnstr(topwin, 0, 0, state, actual_x(state, COLS));
 	}
+
+	if (locationlen > 0)
+		mvwaddstr(topwin, 0, COLS - locationlen - 1, location);
 
 	wattroff(topwin, interface_color_pair[TITLE_BAR]);
 

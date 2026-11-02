@@ -402,11 +402,20 @@ void window_init(void)
 
 	topwin = NULL;
 
+	/* This editor has no shortcut-guide rows. */
+	SET(NO_HELP);
+
 	/* If the terminal is very flat, don't set up a title bar. */
 	if (LINES < 3) {
 		editwinrows = (ISSET(ZERO) ? LINES : 1);
 		/* Set up two subwindows.  If the terminal is just one line,
 		 * edit window and status-bar window will cover each other. */
+		midwin = newwin(editwinrows, COLS, 0, 0);
+		footwin = newwin(1, COLS, LINES - 1, 0);
+	} else if (!ISSET(ZERO) && !ISSET(MINIBAR)) {
+		/* Edit from the top; put the title above the final message row. */
+		editwinrows = LINES - 2;
+		topwin = newwin(1, COLS, LINES - 2, 0);
 		midwin = newwin(editwinrows, COLS, 0, 0);
 		footwin = newwin(1, COLS, LINES - 1, 0);
 	} else {
@@ -1083,14 +1092,9 @@ void toggle_this(int flag)
 			draw_all_subwindows();
 			return;
 		case NO_HELP:
-			if (LINES < (ISSET(ZERO) ? 3 : ISSET(MINIBAR) ? 4 : 5)) {
-				statusline(AHEM, _("Too tiny"));
-				TOGGLE(flag);
-				return;
-			}
-			window_init();
-			draw_all_subwindows();
-			break;
+			/* Do not allow the removed shortcut guide to reappear. */
+			SET(NO_HELP);
+			return;
 		case CONSTANT_SHOW:
 			if (LINES == 1) {
 				statusline(AHEM, _("Too tiny"));
@@ -2694,6 +2698,10 @@ int main(int argc, char **argv)
 #endif
 		if (currmenu != MMAIN)
 			bottombars(MMAIN);
+
+		/* Keep the cursor coordinates on the relocated title bar current. */
+		if (!ISSET(ZERO) && !ISSET(MINIBAR))
+			titlebar(NULL);
 
 #ifndef NANO_TINY
 		/* Do sideways scrolling only when the user didn't switch it off,
