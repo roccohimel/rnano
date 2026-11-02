@@ -15,8 +15,14 @@ sudo dnf install git gcc make autoconf automake gettext gettext-devel groff texi
 ```
 Build:
 ```
-./configure --prefix="$HOME/.local"
+./configure --prefix="/usr"
 make -j$(nproc)
-#sudo dnf remove nano
-#sudo make install
 ```
+Install:
+```
+sudo dnf remove nano
+sudo make install
+printf 'include "/usr/share/nano/*.nanorc"\ninclude "/usr/share/nano/extra/*.nanorc"\n' >> ~/.nanorc
+```
+
+This should work on Fedora.
